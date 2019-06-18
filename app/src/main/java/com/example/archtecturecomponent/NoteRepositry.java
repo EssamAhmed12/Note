@@ -8,68 +8,83 @@ import java.util.List;
 
 public class NoteRepositry{
     private NoteDao noteDao;
-    private LiveData<List<Note>> allNote;
+    private LiveData<List<Note>> allNotes;
 
-    public NoteRepositry(Application application){
-        NoteDatabase noteDatabase=NoteDatabase.getInstance(application);
-        noteDao= noteDatabase.noteDao();
-        allNote=noteDao.getAllNotes();
-    }
-    public void insert(Note note){
-        new InsertNoteAsynTask(noteDao).execute(note);
-    }
-    public void update(Note note){
-        new UpdateNoteAsynTask(noteDao).execute(note);
-    }
-    public void delete(Note note){
-        new DeleteNoteAsynTask(noteDao).execute(note);
-    }
-    public void deleteAllNotes(){
-        new DeleteAllNotesNoteAsynTask(noteDao).execute();
+    public NoteRepositry(Application application) {
+        NoteDatabase database = NoteDatabase.getInstance(application);
+        noteDao = database.noteDao();
+        allNotes = noteDao.getAllNotes();
     }
 
-    public LiveData<List<Note>> getAllNote() {
-        return allNote;
+    public void insert(Note note) {
+        new InsertNoteAsyncTask(noteDao).execute(note);
     }
 
-    public static class InsertNoteAsynTask extends AsyncTask<Note,Void,Void>{
+    public void update(Note note) {
+        new UpdateNoteAsyncTask(noteDao).execute(note);
+    }
+
+    public void delete(Note note) {
+        new DeleteNoteAsyncTask(noteDao).execute(note);
+    }
+
+    public void deleteAllNotes() {
+        new DeleteAllNotesAsyncTask(noteDao).execute();
+    }
+
+    public LiveData<List<Note>> getAllNotes() {
+        return allNotes;
+    }
+
+    private static class InsertNoteAsyncTask extends AsyncTask<Note, Void, Void> {
         private NoteDao noteDao;
-        private InsertNoteAsynTask(NoteDao noteDao){
-            this.noteDao=noteDao;
+
+        private InsertNoteAsyncTask(NoteDao noteDao) {
+            this.noteDao = noteDao;
         }
+
         @Override
         protected Void doInBackground(Note... notes) {
             noteDao.insert(notes[0]);
             return null;
         }
     }
-    public static class UpdateNoteAsynTask extends AsyncTask<Note,Void,Void>{
+
+    private static class UpdateNoteAsyncTask extends AsyncTask<Note, Void, Void> {
         private NoteDao noteDao;
-        private UpdateNoteAsynTask(NoteDao noteDao){
-            this.noteDao=noteDao;
+
+        private UpdateNoteAsyncTask(NoteDao noteDao) {
+            this.noteDao = noteDao;
         }
+
         @Override
         protected Void doInBackground(Note... notes) {
             noteDao.update(notes[0]);
             return null;
         }
     }
-    public static class DeleteNoteAsynTask extends AsyncTask<Note,Void,Void>{
+
+    private static class DeleteNoteAsyncTask extends AsyncTask<Note, Void, Void> {
         private NoteDao noteDao;
-        private DeleteNoteAsynTask(NoteDao noteDao){
-            this.noteDao=noteDao;
+
+        private DeleteNoteAsyncTask(NoteDao noteDao) {
+            this.noteDao = noteDao;
         }
+
         @Override
         protected Void doInBackground(Note... notes) {
             noteDao.delete(notes[0]);
             return null;
         }
     }
-    public static class DeleteAllNotesNoteAsynTask extends AsyncTask<Void,Void,Void>{
+
+    private static class DeleteAllNotesAsyncTask extends AsyncTask<Void, Void, Void> {
         private NoteDao noteDao;
-        private DeleteAllNotesNoteAsynTask(NoteDao noteDao){
-            this.noteDao=noteDao;
+
+        private DeleteAllNotesAsyncTask(NoteDao noteDao) {
+            this.noteDao = noteDao;
         }
+
         @Override
         protected Void doInBackground(Void... voids) {
             noteDao.deleteAllNotes();
